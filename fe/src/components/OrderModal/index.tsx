@@ -6,14 +6,24 @@ type OrderModalProps = {
   visible: boolean;
   order: Order | null;
   onClose: () => void;
+  onCancelOrder: () => void
+  isLoading: boolean
+  onChangeOrderStatus: () => void;
 }
 
-export function OrderModal({visible, order,onClose}:OrderModalProps){
-  if(!visible || !order){
+export function OrderModal({
+  visible,
+  order,
+  onClose,
+  onCancelOrder,
+  isLoading,
+  onChangeOrderStatus
+}: OrderModalProps) {
+  if (!visible || !order) {
     return null;
   }
 
-  const total = order.products.reduce( (total, {quantity, product}) => {
+  const total = order.products.reduce((total, { quantity, product }) => {
     return total + (product.price * quantity);
   }, 0);
   return (
@@ -43,12 +53,12 @@ export function OrderModal({visible, order,onClose}:OrderModalProps){
         <OrderDetails>
           <strong>Itens</strong>
           <div className="order-items">
-            {order.products.map(({_id, quantity, product}) => (
+            {order.products.map(({ _id, quantity, product }) => (
               <div className="item" key={_id}>
                 <img
                   src={`http://localhost:3001/uploads/${product.imagePath}`}
                   alt={product.name}
-                  width = "56"
+                  width="56"
                   height="28.51"
                 />
                 <span className='quantity'>{quantity}x</span>
@@ -67,11 +77,29 @@ export function OrderModal({visible, order,onClose}:OrderModalProps){
         </OrderDetails>
 
         <Actions>
-          <button type='button' className='primary'>
-            <span>👨‍🍳</span>
-            <strong>Iniciar Produção</strong>
-          </button>
-          <button type="button" className="secondary">
+          {order.status !== 'DONE' &&(
+            <button
+              type='button'
+              className='primary'
+              disabled={isLoading}
+              onClick={onChangeOrderStatus}
+            >
+              <span>
+                {order.status === 'WAITING' && '👨‍🍳'}
+                {order.status === 'IN PRODUCTION' && '✅'}
+              </span>
+              <strong>
+                {order.status === 'WAITING' && 'Iniciar Produção'}
+                {order.status === 'IN PRODUCTION' && 'Concluir Pedido'}
+              </strong>
+            </button>
+          )}
+          <button
+            type="button"
+            className="secondary"
+            onClick={onCancelOrder}
+            disabled={isLoading}
+          >
             Cancelar pedido
           </button>
         </Actions>

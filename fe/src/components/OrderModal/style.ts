@@ -115,6 +115,11 @@ export const OrderDetails = styled.div`
 
 
 export const Actions = styled.footer`
+
+  button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   display: flex;
   flex-direction: column;
   margin-top: 32px;
